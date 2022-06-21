@@ -7,7 +7,7 @@ Build stage --> to pull files from github repository and then build a container 
 
 run stage --> to run the container image and open port 8080 
 
-stop stage --> 
+stop stage --> to stop and delete the container
 
 **2nd pipeline -Testing docker-compose **
 
@@ -17,4 +17,4 @@ Pretesting stage --> npm test to run test
 
 Curl page to check app stage --> sleep 15 seconds and test curl the localhost to ensure container build has no issue
 
-Stop docker-compose stage --> to stop the build
+Stop docker-compose stage --> to stop the containers
