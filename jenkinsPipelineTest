@@ -1,0 +1,88 @@
+#testing pipeline react app 
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                // Get some code from a GitHub repository
+                git 'https://github.com/StephenGrider/docker-react.git'
+
+                sh "docker build . -t shahzirin/reactapp:v1"
+                
+
+            }
+        }
+    
+        stage('run') {
+            steps {
+                
+                sh "docker run -p 8080:80 -d --name test shahzirin/reactapp:v1" 
+
+            }
+        }
+        
+        stage('stop') {
+            steps {
+                
+                sh "docker stop test"
+                sh "docker rm test"
+
+            }
+        }
+            
+        }   
+    
+}
+
+#testing docker-compose pipeline app
+#sleep 30s 
+pipeline {
+    agent any
+
+    stages {
+        stage('Build pretest container') {
+            steps {
+                // Get some code from a GitHub repository
+                git 'https://github.com/StephenGrider/multi-docker.git/'
+
+                sh "docker build -t shahzirin/react-test -f ./client/Dockerfile.dev ./client"
+                
+                
+
+            }
+        }
+    
+        stage('Pretesting ') {
+            steps {
+                
+                sh "docker run shahzirin/react-test npm test -- --coverage" 
+
+            }
+        }
+        
+        stage('Docker-compose after test pass') {
+            steps {
+                
+                sh "docker-compose up -d"
+
+            }
+        }
+        
+        stage('Curl page to check app') {
+            steps {
+                sleep time: 15, unit: 'SECONDS'
+                sh "docker exec -i dockercomposetest_nginx_1 curl 127.0.0.1:80"
+
+            }
+        }
+         
+         
+                stage('Stop docker-compose') {
+            steps {
+                
+                sh "docker-compose down"
+
+            }
+        }
+        
